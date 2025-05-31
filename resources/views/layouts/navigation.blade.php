@@ -34,6 +34,24 @@
                     </x-slot>
 
                     <x-slot name="content">
+                        <div x-data="themeSwitcher" x-init="init()">
+                            <button @click.prevent="toggleTheme()"
+                                    class="block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-800 transition duration-150 ease-in-out">
+                                <div class="flex items-center">
+                                    <template x-if="currentTheme === 'light'">
+                                        <svg class="w-5 h-5 mr-2 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                                        </svg>
+                                    </template>
+                                    <template x-if="currentTheme === 'dark'">
+                                        <svg class="w-5 h-5 mr-2 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m8.66-8.66l-.707.707M4.041 4.041l-.707.707M21 12h-1M4 12H3m15.364 4.95l-.707-.707M5.757 5.757l-.707-.707"></path>
+                                        </svg>
+                                    </template>
+                                    <span x-text="currentTheme === 'light' ? 'Dark Mode' : 'Light Mode'"></span>
+                                </div>
+                            </button>
+                        </div>
                         <x-dropdown-link :href="route('profile.edit')">
                             {{ __('Profile') }}
                         </x-dropdown-link>
