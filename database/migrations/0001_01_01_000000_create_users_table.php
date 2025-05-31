@@ -19,6 +19,25 @@ return new class extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
+
+            $table->boolean('is_vip')->default(false);
+            $table->timestamp('vip_expires_at')->nullable();
+
+            $table->unsignedBigInteger('current_level_id')->default(1)->references('id')->on('level_definitions')->onDelete('restrict');
+
+            $table->unsignedBigInteger('experience_points')->default(0);
+
+            $table->integer('energy_points')->default(100);
+            $table->integer('max_energy_points')->default(100);
+
+            $table->unsignedBigInteger('money')->default(1000);
+
+            // Atributos base do personagem
+            $table->integer('base_strength')->default(5);
+            $table->integer('base_dexterity')->default(5);
+            $table->integer('base_intelligence')->default(5);
+
+
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
