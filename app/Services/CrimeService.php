@@ -7,6 +7,7 @@ use App\Models\Crime;
 use App\Models\CrimeLog;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class CrimeService
@@ -22,6 +23,62 @@ class CrimeService
     {
     }
 
+    public function getCrimeDataForUser(User $user): Collection
+    {
+        $availableCrimes = Crime::query()->where('required_level_id', '<=', $user->current_level_id + 2)
+            ->orderBy('required_level_id')
+            ->get();
+
+        $lastAttempts = CrimeLog::query()->where('user_id', $user->id)
+            ->whereIn('crime_id', $availableCrimes->pluck('id'))
+            ->select('crime_id', DB::raw('MAX(attempted_at) as last_attempted_at'))
+            ->groupBy('crime_id')
+            ->get()
+            ->keyBy('crime_id');
+
+        return $availableCrimes->map(function ($crime) use ($user, $lastAttempts) {
+            $lastAttempt = $lastAttempts->get($crime->id);
+            $cooldownEndsAt = $lastAttempt ? Carbon::parse($lastAttempt->last_attempted_at)->addSeconds($crime->cooldown_seconds) : null;
+            $isOnCooldown = $cooldownEndsAt && $cooldownEndsAt->isFuture();
+
+            return (object) [
+                'id' => $crime->id,
+                'name' => $crime->name,
+                'description' => $crime->description,
+                'energy_cost' => $crime->energy_cost,
+                'required_level_id' => $crime->required_level_id,
+                'primary_attribute' => $crime->primary_attribute->value,
+                'success_chance' => $this->getSuccessChance($user, $crime),
+                'experience_reward' => $crime->experience_reward,
+                'is_on_cooldown' => $isOnCooldown,
+                'cooldown_ends_at' => $isOnCooldown ? $cooldownEndsAt->toIso8601String() : null,
+            ];
+        });
+    }
+
+    /**
+     * Calcula a chance do crime ocorrer, para ser exibido na view
+     *
+     * @param User $user
+     * @param Crime $crime
+     * @return int
+     */
+    public function getSuccessChance(User $user, Crime $crime): int
+    {
+        $playerAttributeValue = $this->characterAttributeService->getEffectiveAttribute($user, $crime->primary_attribute->value);
+
+        $successChance = $crime->base_success_chance + (($playerAttributeValue - $crime->required_level_id) * self::ATTRIBUTE_SUCCESS_FACTOR);
+
+        return (int) max(self::MIN_SUCCESS_CHANCE, min($successChance, self::MAX_SUCCESS_CHANCE));
+    }
+
+    /**
+     * Gerencia os métodos para cometer um crime
+     *
+     * @param User $user
+     * @param Crime $crime
+     * @return CrimeOutcomeDTO
+     */
     public function attemptCrime(User $user, Crime $crime): CrimeOutcomeDTO
     {
         if ($preconditionFailure = $this->checkPreconditions($user, $crime)) {

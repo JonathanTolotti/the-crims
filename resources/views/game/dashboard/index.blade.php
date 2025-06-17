@@ -173,7 +173,7 @@
                 <div class="p-6">
                     <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Ações do Jogo</h3>
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                        <a href="" class="block p-6 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-lg shadow-md transition ease-in-out duration-150">
+                        <a href="{{route('game.crimes.index')}}" class="block p-6 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-lg shadow-md transition ease-in-out duration-150">
                             <h4 class="text-lg font-semibold text-gray-900 dark:text-white">Cometer Crimes</h4>
                             <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Busque sua fortuna e reputação.</p>
                         </a>
