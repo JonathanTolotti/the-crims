@@ -31,6 +31,7 @@ return new class extends Migration
             $table->integer('max_energy_points')->default(100);
 
             $table->unsignedBigInteger('money')->default(1000);
+            $table->unsignedBigInteger('crims_coin')->default(0);
 
             // Atributos base do personagem
             $table->integer('base_strength')->default(5);
