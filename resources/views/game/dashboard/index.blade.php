@@ -9,6 +9,9 @@
                         {{-- Mensagem de Boas-Vindas --}}
                         <div>
                             <h3 class="text-2xl font-semibold text-gray-800 dark:text-gray-100">Bem-vindo de volta, {{ $user->name }}!</h3>
+                            @if ($user->characterClass)
+                                <p class="mt-1 text-lg font-medium text-indigo-400 dark:text-indigo-500">{{ $user->characterClass->name }}</p>
+                            @endif
                             <p class="mt-1 text-gray-600 dark:text-gray-400">Sua jornada no submundo continua.</p>
                         </div>
 

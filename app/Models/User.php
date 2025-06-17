@@ -39,6 +39,11 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    public function characterClass(): BelongsTo
+    {
+        return $this->belongsTo(CharacterClass::class, 'character_class_id');
+    }
+
     /**
      * Get the attributes that should be cast.
      *

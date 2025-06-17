@@ -21,7 +21,8 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call([
-            LevelDefinitionSeeder::class
+            LevelDefinitionSeeder::class,
+            CharacterClassSeeder::class
         ]);
     }
 }

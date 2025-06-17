@@ -8,8 +8,23 @@ class CharacterAttributeService
 {
     public function getEffectiveAttribute(User $user, string $attributeName): int
     {
+        $user->loadMissing('characterClass');
+
         $baseAttributeField = 'base_' . $attributeName;
-        return $user->{$baseAttributeField} ?? 0;
+        $baseAttributeValue = $user->{$baseAttributeField} ?? 0;
+
+        $classMultiplier = 0;
+        if ($user->characterClass) {
+            $modifierField = $attributeName . '_modifier';
+            $classMultiplier = $user->characterClass->{$modifierField} ?? 0;
+        }
+
+        $itemMultiplier = 0;
+        $itemFlatBonus = 0;
+
+        $effectiveValue = $baseAttributeValue * (1 + $classMultiplier + $itemMultiplier) + $itemFlatBonus;
+
+        return (int) round($effectiveValue);
     }
 
     public function getCurrentEnergy(User $user): int

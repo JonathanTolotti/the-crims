@@ -21,7 +21,7 @@ class DashboardController
 
     public function index()
     {
-        $user = Auth::user()->load('levelDefinition');
+        $user = Auth::user()->load('levelDefinition', 'characterClass');
 
         $experienceProgress = $this->levelProgressionService->getExperienceProgress($user);
 
