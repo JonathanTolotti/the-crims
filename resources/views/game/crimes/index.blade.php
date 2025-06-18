@@ -51,7 +51,7 @@
                             <div class="flex-shrink-0 w-full md:w-auto md:border-l md:dark:border-gray-700 md:pl-6 text-center md:text-left">
                                 <p class="text-gray-600 dark:text-gray-400 font-medium">Chance de Sucesso:</p>
                                 <p class="text-3xl font-bold my-1">{{ $crime->success_chance }}%</p>
-                                <form method="POST" action="{{ route('game.crimes.attempt', $crime->id) }}" class="flex items-center gap-2 mt-2">
+                                <form method="POST" action="{{ route('game.crimes.attempt', $crime->uuid) }}" class="flex items-center gap-2 mt-2">
                                     @csrf
                                     <x-primary-button class="flex-grow justify-center" ::disabled="!canAttempt">
                                         {{-- O texto do botão agora é controlado pelo Alpine --}}

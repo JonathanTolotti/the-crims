@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\EquipmentSlotEnum;
 use App\Enums\ItemTypeEnum;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
@@ -20,6 +21,12 @@ class Item extends Model
     public function userItems(): HasMany
     {
         return $this->hasMany(UserItem::class);
+    }
+
+    public function droppedByCrimes(): BelongsToMany
+    {
+        return $this->belongsToMany(Crime::class, 'crime_item')
+            ->withPivot('drop_chance');
     }
 
     public function getRouteKeyName(): string

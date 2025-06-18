@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             CrimeSeeder::class,
             UserSeeder::class,
             ItemSeeder::class,
+            CrimeItemSeeder::class,
         ]);
     }
 }

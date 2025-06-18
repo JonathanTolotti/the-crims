@@ -5,6 +5,7 @@ namespace App\Services;
 use App\DataTransferObjects\CrimeOutcomeDTO;
 use App\Models\Crime;
 use App\Models\CrimeLog;
+use App\Models\Item;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -18,7 +19,8 @@ class CrimeService
 
     public function __construct(
         protected CharacterAttributeService $characterAttributeService,
-        protected LevelProgressionService   $levelProgressionService
+        protected LevelProgressionService   $levelProgressionService,
+        protected InventoryService $inventoryService
     )
     {
     }
@@ -42,7 +44,7 @@ class CrimeService
             $isOnCooldown = $cooldownEndsAt && $cooldownEndsAt->isFuture();
 
             return (object) [
-                'id' => $crime->id,
+                'uuid' => $crime->uuid,
                 'name' => $crime->name,
                 'description' => $crime->description,
                 'energy_cost' => $crime->energy_cost,
@@ -143,11 +145,17 @@ class CrimeService
 
         $user->money += $moneyGained;
         $this->levelProgressionService->addExperience($user, $experienceGained);
+        $droppedItem = $this->handleItemDrop($user, $crime);
         $user->save();
 
         $this->logAttempt($user, $crime, true, $moneyGained, $experienceGained);
 
         $message = "Sucesso! Você ganhou R$ $moneyGained e $experienceGained XP.";
+
+        if ($droppedItem) {
+            $message .= " Você encontrou: {$droppedItem->name}!";
+        }
+
         return new CrimeOutcomeDTO(true, $message, $moneyGained, $experienceGained);
     }
     private function handleFailure(User $user, Crime $crime): CrimeOutcomeDTO
@@ -168,6 +176,32 @@ class CrimeService
             'experience_gained' => $experienceGained,
             'attempted_at' => Carbon::now(),
         ]);
+    }
+
+    /**
+     * Cuida da chance de dropar o item
+     *
+     * @param User $user
+     * @param Crime $crime
+     * @return Item|null
+     */
+    private function handleItemDrop(User $user, Crime $crime): ?Item
+    {
+        $possibleLoot = $crime->possibleLoot;
+
+        if ($possibleLoot->isEmpty()) {
+            return null;
+        }
+
+        foreach ($possibleLoot as $lootableItem) {
+            $chance = $lootableItem->pivot->drop_chance * 1000; // ex: 0.05 * 1000 = 50
+            if (rand(1, 1000) <= $chance) {
+                $this->inventoryService->addItem($user, $lootableItem);
+                return $lootableItem;
+            }
+        }
+
+        return null;
     }
 
 }
