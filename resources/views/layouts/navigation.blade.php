@@ -18,6 +18,9 @@
                     <x-nav-link :href="route('game.crimes.index')" :active="request()->routeIs('game.crimes.index')">
                         {{ __('Crimes') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('game.inventory.index')" :active="request()->routeIs('game.inventory.index')">
+                        {{ __('Inventário') }}
+                    </x-nav-link>
                 </div>
             </div>
 

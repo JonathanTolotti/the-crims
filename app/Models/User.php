@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 
 class User extends Authenticatable
 {
@@ -50,6 +51,16 @@ class User extends Authenticatable
         return $this->hasMany(CrimeLog::class);
     }
 
+    public function inventory(): HasMany
+    {
+        return $this->hasMany(UserItem::class);
+    }
+
+    public function equippedItems(): HasMany
+    {
+        return $this->inventory()->where('is_equipped', true);
+    }
+
     /**
      * Get the attributes that should be cast.
      *
@@ -61,5 +72,19 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'uuid';
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function ($model) {
+            if (empty($model->uuid)) {
+                $model->uuid = Str::uuid()->toString();
+            }
+        });
     }
 }

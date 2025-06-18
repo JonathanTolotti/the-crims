@@ -18,7 +18,8 @@ class DatabaseSeeder extends Seeder
             LevelDefinitionSeeder::class,
             CharacterClassSeeder::class,
             CrimeSeeder::class,
-            UserSeeder::class
+            UserSeeder::class,
+            ItemSeeder::class,
         ]);
     }
 }

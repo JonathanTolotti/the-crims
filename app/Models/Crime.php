@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\CharacterAttributeEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 class Crime extends Model
 {
@@ -28,5 +29,19 @@ class Crime extends Model
     public function logs(): HasMany
     {
         return $this->hasMany(CrimeLog::class);
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'uuid';
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function ($model) {
+            if (empty($model->uuid)) {
+                $model->uuid = Str::uuid()->toString();
+            }
+        });
     }
 }

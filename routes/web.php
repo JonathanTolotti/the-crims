@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Game\CrimeController;
 use App\Http\Controllers\Game\DashboardController;
+use App\Http\Controllers\Game\InventoryController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -21,6 +22,8 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/crimes', [CrimeController::class, 'index'])->name('crimes.index');
         Route::post('/crimes/{crime}/attempt', [CrimeController::class, 'attempt'])->name('crimes.attempt');
+
+        Route::get('/inventory', [InventoryController::class, 'index'])->name('inventory.index');
     });
 });
 
