@@ -26,6 +26,8 @@ return new class extends Migration
             $table->integer('dexterity_bonus')->default(0);
             $table->integer('intelligence_bonus')->default(0);
 
+            $table->foreignId('required_level_id')->nullable()->constrained('level_definitions');
+
             // --- Campos específicos para CONSUMÍVEIS ---
             $table->string('effect_type')->nullable();
             $table->integer('effect_amount')->nullable();

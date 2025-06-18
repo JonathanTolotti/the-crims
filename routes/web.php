@@ -24,6 +24,11 @@ Route::middleware('auth')->group(function () {
         Route::post('/crimes/{crime}/attempt', [CrimeController::class, 'attempt'])->name('crimes.attempt');
 
         Route::get('/inventory', [InventoryController::class, 'index'])->name('inventory.index');
+
+        Route::post('/inventory/item/{userItem}/use', [InventoryController::class, 'use'])->name('inventory.use');
+
+        Route::post('/inventory/item/{userItem}/equip', [InventoryController::class, 'equip'])->name('inventory.equip');
+        Route::post('/inventory/item/{userItem}/unequip', [InventoryController::class, 'unequip'])->name('inventory.unequip');
     });
 });
 

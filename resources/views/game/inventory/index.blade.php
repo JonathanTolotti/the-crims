@@ -63,19 +63,30 @@
                             {{-- Botões de Ação e Badge de Tier --}}
                             <div class="mt-4 pt-4 border-t dark:border-gray-700 flex justify-between items-center">
                                 @if($userItem->item->item_type === \App\Enums\ItemTypeEnum::EQUIPMENT)
-                                    {{-- Badge de Tier para equipamentos --}}
                                     <div class="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-indigo-900 dark:text-indigo-300">
                                         T{{ $userItem->tier }}
                                     </div>
-                                    <x-secondary-button class="text-xs">Equipar</x-secondary-button>
+                                    @if($userItem->is_equipped)
+                                        <form method="POST" action="{{ route('game.inventory.unequip', $userItem) }}">
+                                            @csrf
+                                            <x-secondary-button type="submit" class="text-xs">Desequipar</x-secondary-button>
+                                        </form>
+                                    @else
+                                        <form method="POST" action="{{ route('game.inventory.equip', $userItem) }}">
+                                            @csrf
+                                            <x-secondary-button type="submit" class="text-xs">Equipar</x-secondary-button>
+                                        </form>
+                                    @endif
                                 @elseif($userItem->item->item_type === \App\Enums\ItemTypeEnum::CONSUMABLE)
-                                    {{-- Deixa um espaço em branco para alinhar o botão "Usar" à direita --}}
-                                    <span></span>
-                                    <x-secondary-button class="text-xs">Usar</x-secondary-button>
+                                    <span></span> {{-- Espaço para alinhar --}}
+                                    <form method="POST" action="{{ route('game.inventory.use', $userItem) }}">
+                                        @csrf
+                                        <x-secondary-button type="submit" class="text-xs">Usar</x-secondary-button>
+                                    </form>
+
                                 @elseif($userItem->item->item_type === \App\Enums\ItemTypeEnum::REFINING_MATERIAL)
-                                    {{-- Deixa um espaço em branco para alinhar o botão "Usar" à direita --}}
-                                    <span></span>
-                                    <x-secondary-button class="text-xs">Refinar</x-secondary-button>
+                                    <span></span> {{-- Espaço para alinhar --}}
+                                    <x-secondary-button type="submit" class="text-xs">Refinar</x-secondary-button>
                                 @endif
                             </div>
                         </div>

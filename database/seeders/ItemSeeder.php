@@ -25,7 +25,10 @@ class ItemSeeder extends Seeder
             'image_path' => 'images/items/worn_dagger.png',
             'stackable' => false,
             'equipment_slot' => EquipmentSlotEnum::WEAPON,
+            'strength_bonus' => 5,
             'dexterity_bonus' => 2,
+            'intelligence_bonus' => 1,
+            'required_level_id' => 1,
         ]);
 
         // Exemplo de CONSUMÍVEL

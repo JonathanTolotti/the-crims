@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\EquipmentSlotEnum;
 use App\Enums\ItemTypeEnum;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
@@ -27,6 +28,11 @@ class Item extends Model
     {
         return $this->belongsToMany(Crime::class, 'crime_item')
             ->withPivot('drop_chance');
+    }
+
+    public function requiredLevel(): BelongsTo
+    {
+        return $this->belongsTo(LevelDefinition::class, 'required_level_id');
     }
 
     public function getRouteKeyName(): string

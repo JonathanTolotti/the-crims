@@ -8,7 +8,7 @@ class CharacterAttributeService
 {
     public function getEffectiveAttribute(User $user, string $attributeName): int
     {
-        $user->loadMissing('characterClass');
+        $user->loadMissing('characterClass', 'equippedItems.item');
 
         $baseAttributeField = 'base_' . $attributeName;
         $baseAttributeValue = $user->{$baseAttributeField} ?? 0;
@@ -19,10 +19,15 @@ class CharacterAttributeService
             $classMultiplier = $user->characterClass->{$modifierField} ?? 0;
         }
 
-        $itemMultiplier = 0;
-        $itemFlatBonus = 0;
+        $bonusFromItems = 0;
 
-        $effectiveValue = $baseAttributeValue * (1 + $classMultiplier + $itemMultiplier) + $itemFlatBonus;
+        foreach ($user->equippedItems as $equippedUserItem) {
+            $bonusField = $attributeName . '_bonus';
+            $bonusFromItems += $equippedUserItem->item->{$bonusField} ?? 0;
+            // No futuro, o tier pode entrar aqui: $bonusFromItems += ... * $equippedUserItem->tier
+        }
+
+        $effectiveValue = ($baseAttributeValue * (1 + $classMultiplier)) + $bonusFromItems;
 
         return (int) round($effectiveValue);
     }
