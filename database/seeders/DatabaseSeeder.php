@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             ItemSeeder::class,
             CrimeItemSeeder::class,
             UserInventorySeeder::class,
+            TierUpgradeRuleSeeder::class,
         ]);
     }
 }

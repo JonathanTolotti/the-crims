@@ -3,6 +3,7 @@
 use App\Http\Controllers\Game\CrimeController;
 use App\Http\Controllers\Game\DashboardController;
 use App\Http\Controllers\Game\InventoryController;
+use App\Http\Controllers\Game\RefiningController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -29,6 +30,10 @@ Route::middleware('auth')->group(function () {
 
         Route::post('/inventory/item/{userItem}/equip', [InventoryController::class, 'equip'])->name('inventory.equip');
         Route::post('/inventory/item/{userItem}/unequip', [InventoryController::class, 'unequip'])->name('inventory.unequip');
+
+        Route::get('/refinery', [RefiningController::class, 'index'])->name('refinery.index');
+        Route::post('/refinery/{userItem}/refine', [RefiningController::class, 'refine'])->name('refinery.refine');
+
     });
 });
 

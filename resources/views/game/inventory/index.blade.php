@@ -86,7 +86,10 @@
 
                                 @elseif($userItem->item->item_type === \App\Enums\ItemTypeEnum::REFINING_MATERIAL)
                                     <span></span> {{-- Espaço para alinhar --}}
-                                    <x-secondary-button type="submit" class="text-xs">Refinar</x-secondary-button>
+                                    <a href="{{ route('game.refinery.index') }}"
+                                       class="inline-flex items-center px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-500 rounded-md font-semibold text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-25 transition ease-in-out duration-150">
+                                        Refinar
+                                    </a>
                                 @endif
                             </div>
                         </div>

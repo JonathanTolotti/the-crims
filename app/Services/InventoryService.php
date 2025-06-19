@@ -65,4 +65,13 @@ class InventoryService
 
         return ['success' => true, 'message' => "Você usou: {$item->name}."];
     }
+
+    public function removeItem(User $user, UserItem $userItem, int $quantity = 1): void
+    {
+        if ($userItem->quantity > $quantity) {
+            $userItem->decrement('quantity', $quantity);
+        } else {
+            $userItem->delete();
+        }
+    }
 }
