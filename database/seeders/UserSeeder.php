@@ -22,6 +22,7 @@ class UserSeeder extends Seeder
             'vip_expires_at' => now()->addDays(365),
             'character_class_id' => 1,
             'crims_coin' => 10000,
+            'money' => 10000000,
         ]);
     }
 }

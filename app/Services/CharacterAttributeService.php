@@ -6,6 +6,8 @@ use App\Models\User;
 
 class CharacterAttributeService
 {
+    private const TIER_BONUS_MULTIPLIER = 0.15;
+
     public function getEffectiveAttribute(User $user, string $attributeName): int
     {
         $user->loadMissing('characterClass', 'equippedItems.item');
@@ -23,8 +25,13 @@ class CharacterAttributeService
 
         foreach ($user->equippedItems as $equippedUserItem) {
             $bonusField = $attributeName . '_bonus';
-            $bonusFromItems += $equippedUserItem->item->{$bonusField} ?? 0;
-            // No futuro, o tier pode entrar aqui: $bonusFromItems += ... * $equippedUserItem->tier
+            $itemBaseBonus = $equippedUserItem->item->{$bonusField} ?? 0;
+
+            if ($itemBaseBonus > 0) {
+                $tierMultiplier = 1 + ($equippedUserItem->tier * self::TIER_BONUS_MULTIPLIER);
+
+                $bonusFromItems += $itemBaseBonus * $tierMultiplier;
+            }
         }
 
         $effectiveValue = ($baseAttributeValue * (1 + $classMultiplier)) + $bonusFromItems;

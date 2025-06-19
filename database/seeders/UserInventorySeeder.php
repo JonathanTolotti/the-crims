@@ -36,7 +36,7 @@ class UserInventorySeeder extends Seeder
         foreach ($allItems as $item) {
             $quantity = match ($item->item_type) {
                 ItemTypeEnum::EQUIPMENT => 1,
-                ItemTypeEnum::CONSUMABLE, ItemTypeEnum::REFINING_MATERIAL => 50,
+                ItemTypeEnum::CONSUMABLE, ItemTypeEnum::REFINING_MATERIAL => 1000,
                 default => 1,
             };
 
