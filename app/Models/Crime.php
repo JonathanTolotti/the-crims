@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\CharacterAttributeEnum;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
@@ -36,6 +37,11 @@ class Crime extends Model
     {
         return $this->belongsToMany(Item::class, 'crime_item')
             ->withPivot('drop_chance');
+    }
+
+    public function levelDefinition(): BelongsTo
+    {
+        return $this->belongsTo(LevelDefinition::class, 'required_level_id');
     }
 
     public function getRouteKeyName(): string

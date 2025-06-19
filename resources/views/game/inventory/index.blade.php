@@ -14,7 +14,7 @@
                         {{-- Container da Imagem com posicionamento relativo para os badges --}}
                         <div class="p-2 bg-gray-100 dark:bg-gray-900 flex justify-center items-center h-32 relative">
                             @if($userItem->item->image_path)
-                                <img src="{{ asset($userItem->item->image_path) }}" alt="{{ $userItem->item->name }}" class="max-h-full max-w-full object-contain">
+                                <img src="{{ asset('storage/'.$userItem->item->image_path) }}" alt="{{ $userItem->item->name }}" class="max-h-full max-w-full object-contain">
                             @else
                                 <div class="w-full h-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
                                     <span class="text-gray-400 dark:text-gray-500 text-xs">Sem Imagem</span>
