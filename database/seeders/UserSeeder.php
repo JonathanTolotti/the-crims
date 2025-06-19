@@ -23,6 +23,7 @@ class UserSeeder extends Seeder
             'character_class_id' => 1,
             'crims_coin' => 10000,
             'money' => 10000000,
+            'is_admin' => true,
         ]);
     }
 }

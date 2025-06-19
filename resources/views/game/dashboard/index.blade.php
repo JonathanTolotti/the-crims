@@ -1,6 +1,21 @@
 <x-app-layout>
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            @if (auth()->user() && auth()->user()->is_admin)
+                <div class="bg-yellow-100 dark:bg-yellow-900/50 border-l-4 border-yellow-400 text-yellow-800 dark:text-yellow-200 p-4 mb-6 rounded-r-lg shadow-md" role="alert">
+                    <div class="flex items-center justify-between flex-wrap gap-4">
+                        <div>
+                            <p class="font-bold">Você está no Modo Administrador</p>
+                            <p class="text-sm">Use o botão ao lado para acessar as ferramentas de gerenciamento.</p>
+                        </div>
+                        <a href="/admin"
+                           class="inline-block bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 font-bold py-2 px-4 rounded-lg shadow hover:bg-gray-200 dark:hover:bg-gray-600 transition ease-in-out duration-150"
+                           target="_blank">  {{-- target="_blank" abre em uma nova aba --}}
+                            Acessar Painel Admin
+                        </a>
+                    </div>
+                </div>
+            @endif
             {{-- Card de Boas-Vindas com Atributos e Status VIP Integrado --}}
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mb-6">
                 <div class="p-6 text-gray-900 dark:text-gray-100 flex flex-wrap sm:flex-nowrap justify-between items-start gap-x-6 gap-y-4">
