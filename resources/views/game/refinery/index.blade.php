@@ -44,7 +44,7 @@
                                 <div class="flex items-center">
                                     <div class="w-16 h-16 bg-gray-200 dark:bg-gray-800 rounded-md flex items-center justify-center mr-4 flex-shrink-0">
                                         @if($data->userItem->item->image_path)
-                                            <img src="{{ asset($data->userItem->item->image_path) }}" alt="{{ $data->userItem->item->name }}" class="max-h-full max-w-full object-contain">
+                                            <img src="{{ asset('storage/'.$data->userItem->item->image_path) }}" alt="{{ $data->userItem->item->name }}" class="max-h-full max-w-full object-contain">
                                         @endif
                                     </div>
                                     <div>
