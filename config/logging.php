@@ -126,6 +126,11 @@ return [
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],
+        'energy_regeneration' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/energy_regeneration.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+        ],
 
     ],
 

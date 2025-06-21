@@ -46,7 +46,16 @@ class CharacterAttributeService
 
     public function getMaxEnergy(User $user): int
     {
-        return $user->max_energy_points;
+        $user->loadMissing('vipTier');
+
+        $baseMaxEnergy = $user->max_energy_points;
+        $vipBonus = 0;
+
+        if ($user->is_vip) {
+            $vipBonus = $user->vipTier?->max_energy_bonus ?? 0;
+        }
+
+        return $baseMaxEnergy + $vipBonus;
     }
 
     public function spendEnergy(User $user, int $amount): bool

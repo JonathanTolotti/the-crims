@@ -3,6 +3,7 @@ namespace App\Console\Commands\Game;
 
 use App\Jobs\RegenerateEnergyJob;
 use App\Models\User;
+use App\Services\CharacterAttributeService;
 use Illuminate\Console\Command;
 
 class RegenerateEnergy extends Command
@@ -11,16 +12,28 @@ class RegenerateEnergy extends Command
 
     protected $description = 'Dispara jobs para regenerar a energia de todos os jogadores ativos.';
 
-    public function handle(): void
+    public function handle(CharacterAttributeService $characterAttributeService): void
     {
         $this->info('Buscando jogadores para regenerar energia...');
 
-        User::whereColumn('energy_points', '<', 'max_energy_points')
-            ->chunkById(100, function ($users) {
+        User::query()
+            ->whereColumn('energy_points', '<', 'max_energy_points')
+            ->orWhereNotNull('vip_tier_id')
+            ->chunkById(100, function ($users) use ($characterAttributeService) {
+
+                $dispatchedCount = 0;
+
                 foreach ($users as $user) {
-                    RegenerateEnergyJob::dispatch($user);
+                    $effectiveMaxEnergy = $characterAttributeService->getMaxEnergy($user);
+                    if ($user->energy_points < $effectiveMaxEnergy) {
+                        RegenerateEnergyJob::dispatch($user);
+                        $dispatchedCount++;
+                    }
                 }
-                $this->comment(count($users) . ' jobs de regeneração de energia foram despachados.');
+
+                if ($dispatchedCount > 0) {
+                    $this->comment($dispatchedCount . ' jobs de regeneração de energia foram despachados para este bloco.');
+                }
             });
 
         $this->info('Processo de despacho de jobs finalizado.');

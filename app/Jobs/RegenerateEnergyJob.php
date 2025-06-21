@@ -8,6 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class RegenerateEnergyJob implements ShouldQueue
 {
@@ -28,8 +29,12 @@ class RegenerateEnergyJob implements ShouldQueue
     {
         $energyToRegenerate = 10;
 
-        if ($this->user->energy_points < $this->user->max_energy_points) {
+        $effectiveMaxEnergy = $characterAttributeService->getMaxEnergy($this->user);
+
+        if ($this->user->energy_points < $effectiveMaxEnergy) {
             $characterAttributeService->addEnergy($this->user, $energyToRegenerate);
+
+            Log::channel('energy_regeneration')->info("Energia regenerada para o usuário ID: {$this->user->id}. Nova energia: {$this->user->fresh()->energy_points}");
         }
     }
 }

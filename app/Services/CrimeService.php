@@ -102,19 +102,26 @@ class CrimeService
             return new CrimeOutcomeDTO(false, 'Energia insuficiente para tentar este crime.');
         }
 
-        $lastAttempt = CrimeLog::query()->where('user_id', $user->id)
+        $cooldownInSeconds = $crime->cooldown_seconds;
+
+        if ($user->is_vip) {
+            $user->loadMissing('vipTier');
+            $cooldownMultiplier = $user->vipTier?->cooldown_reduction_multiplier ?? 1.0;
+            $cooldownInSeconds *= $cooldownMultiplier;
+        }
+
+        $lastAttempt = CrimeLog::where('user_id', $user->id)
             ->where('crime_id', $crime->id)
             ->latest('attempted_at')
             ->first();
 
         if ($lastAttempt) {
-            $cooldownEndsAt = Carbon::parse($lastAttempt->attempted_at)->addSeconds($crime->cooldown_seconds);
+            $cooldownEndsAt = Carbon::parse($lastAttempt->attempted_at)->addSeconds($cooldownInSeconds);
             if (Carbon::now()->lt($cooldownEndsAt)) {
                 $timeLeft = $cooldownEndsAt->diffForHumans(['parts' => 2, 'short' => true]);
                 return new CrimeOutcomeDTO(false, "Aguarde. Você poderá tentar este crime novamente $timeLeft.");
             }
         }
-
         return null;
     }
 
@@ -143,14 +150,24 @@ class CrimeService
         $moneyGained = rand($crime->money_reward_min, $crime->money_reward_max);
         $experienceGained = $crime->experience_reward;
 
-        $user->money += $moneyGained;
-        $this->levelProgressionService->addExperience($user, $experienceGained);
+        if ($user->is_vip) {
+            $user->loadMissing('vipTier');
+            $rewardMultiplier = $user->vipTier?->reward_multiplier ?? 1.0;
+            $moneyGained *= $rewardMultiplier;
+            $experienceGained *= $rewardMultiplier;
+        }
+
+        $finalMoneyGained = (int) round($moneyGained);
+        $finalExperienceGained = (int) round($experienceGained);
+
+        $user->money += $finalMoneyGained;
+        $this->levelProgressionService->addExperience($user, $finalExperienceGained);
         $droppedItem = $this->handleItemDrop($user, $crime);
         $user->save();
 
         $this->logAttempt($user, $crime, true, $moneyGained, $experienceGained);
 
-        $message = "Sucesso! Você ganhou R$ $moneyGained e $experienceGained XP.";
+        $message = "Sucesso! Você ganhou R$ $finalMoneyGained e $finalExperienceGained XP.";
 
         if ($droppedItem) {
             $message .= " Você encontrou: {$droppedItem->name}!";
@@ -189,13 +206,15 @@ class CrimeService
     {
         $possibleLoot = $crime->possibleLoot;
 
-        if ($possibleLoot->isEmpty()) {
-            return null;
-        }
+        if ($possibleLoot->isEmpty()) return null;
+
+        $user->loadMissing('vipTier');
+        $dropRateMultiplier = $user->is_vip ? ($user->vipTier?->drop_rate_multiplier ?? 1.0) : 1.0;
 
         foreach ($possibleLoot as $lootableItem) {
-            $chance = $lootableItem->pivot->drop_chance * 1000; // ex: 0.05 * 1000 = 50
-            if (rand(1, 1000) <= $chance) {
+            $chance = $lootableItem->pivot->drop_chance * $dropRateMultiplier;
+
+            if ((rand(1, 1000) / 1000) <= $chance) {
                 $this->inventoryService->addItem($user, $lootableItem);
                 return $lootableItem;
             }
