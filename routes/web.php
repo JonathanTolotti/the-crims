@@ -4,6 +4,7 @@ use App\Http\Controllers\Game\CrimeController;
 use App\Http\Controllers\Game\DashboardController;
 use App\Http\Controllers\Game\InventoryController;
 use App\Http\Controllers\Game\RefiningController;
+use App\Http\Controllers\Game\ShopController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -33,6 +34,11 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/refinery', [RefiningController::class, 'index'])->name('refinery.index');
         Route::post('/refinery/{userItem}/refine', [RefiningController::class, 'refine'])->name('refinery.refine');
+
+        Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
+        Route::post('/shop/checkout/{storeProduct:uuid}', [ShopController::class, 'checkout'])->name('shop.checkout');
+        Route::get('/shop/success', [ShopController::class, 'success'])->name('shop.success');
+        Route::get('/shop/cancel', [ShopController::class, 'cancel'])->name('shop.cancel');
 
     });
 });

@@ -21,6 +21,9 @@
                     <x-nav-link :href="route('game.inventory.index')" :active="request()->routeIs('game.inventory.index')">
                         {{ __('Inventário') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('game.shop.index')" :active="request()->routeIs('game.shop.index')">
+                        {{ __('Loja VIP') }}
+                    </x-nav-link>
                 </div>
             </div>
 
