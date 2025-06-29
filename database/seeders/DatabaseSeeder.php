@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             CrimeItemSeeder::class,
             UserInventorySeeder::class,
             TierUpgradeRuleSeeder::class,
+            StripeProductSeeder::class,
         ]);
     }
 }
